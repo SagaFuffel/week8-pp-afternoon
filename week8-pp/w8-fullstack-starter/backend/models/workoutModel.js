@@ -5,14 +5,9 @@ const workoutSchema = new mongoose.Schema({
   difficulty: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
-  user_id: {
-  type: mongoose.Schema.Types.ObjectId,
-  required: true,
-  ref: "User",
-},
 });
 
-// add virtual field id
+
 workoutSchema.set('toJSON', {
   virtuals: true,
   transform: (doc, ret) => {

@@ -1,25 +1,36 @@
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const User = require("../models/userModel");
+const config = require("../utils/config");
 
 const requireAuth = async (req, res, next) => {
-  // verify user is authenticated
-  const { authorization } = req.headers;
-
-  if (!authorization) {
-    return res.status(401).json({ error: "Authorization token required" });
+  const authorization = req.get("Authorization");
+  let match = null;
+  if (authorization) {
+    match = authorization.match(/^Bearer\s+(\S+)$/i);
+  }
+  if (!match) {
+    return res.status(401).json({ error: "Authentication required" });
   }
 
-  const token = authorization.split(" ")[1];
-
+  let decodedToken;
   try {
-    const { _id } = jwt.verify(token, process.env.SECRET);
-
-    req.user = await User.findOne({ _id }).select("_id");
-    next();
-  } catch (error) {
-    console.log(error);
-    res.status(401).json({ error: "Request is not authorized" });
+    decodedToken = jwt.verify(match[1], config.SECRET);
+  } catch {
+    return res.status(401).json({ error: "Invalid or expired token" });
   }
+
+  if (!decodedToken || !mongoose.isValidObjectId(decodedToken.id)) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+
+  const user = await User.findById(decodedToken.id);
+  if (!user) {
+    return res.status(401).json({ error: "User no longer exists" });
+  }
+
+  req.user = user;
+  next();
 };
 
 module.exports = requireAuth;
