@@ -7,15 +7,18 @@ const {
   updateWorkout,
   deleteWorkout,
 } = require('../controllers/workoutControllers');
+const requireAuth = require('../middleware/requireAuth');
 
 // GET /api/workouts
 router.get('/', getAllWorkouts);
 
-// POST /api/workouts
-router.post('/', createWorkout);
-
 // GET /api/workouts/:workoutId
 router.get('/:workoutId', getWorkoutById);
+
+router.use(requireAuth);
+
+// POST /api/workouts
+router.post('/', createWorkout);
 
 // PUT /api/workouts/:workoutId
 router.put('/:workoutId', updateWorkout);

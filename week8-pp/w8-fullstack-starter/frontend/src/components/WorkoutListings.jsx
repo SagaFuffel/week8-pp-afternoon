@@ -1,9 +1,11 @@
 import WorkoutListing from "./WorkoutListing";
 
-const WorkoutListings = () => {
+const WorkoutListings = ({workouts}) => {
   return (
     <div className="workout-list">
-      <WorkoutListing />
+      {workouts && workouts.map((workout) => (
+        <WorkoutListing key = {workout._id} workout = {workout} />
+      ))}
     </div>
   );
 };

@@ -3,8 +3,6 @@ const User = require ("../models/userModel");
 const jwt = require ("jsonwebtoken");
 const bcrypt = require ("bcryptjs");
 
-// const { findOne } = require ("../models/workoutModel");
-
 const generateToken = (_id) => {
     return jwt.sign({_id}, process.env.SECRET, {
         expiresIn: "3d",
@@ -46,7 +44,7 @@ const signupUser = async (req, res) => {
             password: hashedPassword,
             phoneNumber,
             name,
-            role: user.role,
+            role,
         });
 
         if (user) {
