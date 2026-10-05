@@ -52,7 +52,7 @@ const signUpUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
     try {
-        const user = await findOne({ username });
+        const user = await User.findOne({ username });
 
         if (user && (await bcrypt.compare(password, user.password))) {
             const token = generateToken(user._id);

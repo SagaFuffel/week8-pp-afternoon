@@ -4,7 +4,7 @@ const workoutRouter = require('./routes/workoutRouter');
 const { unknownEndpoint, errorHandler, requestLogger } = require('./middleware/customMiddleware');
 const userRouter = require("../backend/routes/userRouter");
 const app = express();
-
+require("dotenv").config();
 // Middleware
 app.use(cors());
 app.use(express.json());
