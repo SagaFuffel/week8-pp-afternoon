@@ -57,7 +57,8 @@ const updateWorkout = async (req, res) => {
     if (!workout) {
       return res.status(404).json({message: "not found"}); //exists?
     }
-    return res.status(200).json(workout); //it's empty so no change, send old
+    return res.status(400).json({message:"cannot be empty"});
+    //return res.status(200).json(workout); //it's empty so no change, send old
   }
 
   try {
