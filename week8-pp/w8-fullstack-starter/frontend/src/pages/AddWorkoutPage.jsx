@@ -7,8 +7,6 @@ const AddWorkoutPage = () => {
   const [difficulty, setDifficulty] = useState ("Beginner");
   const [description, setDescription] = useState ("");
   const [price, setPrice] = useState ("");
-  const [error, setError] = useState (null);
-  const [pending, setPending] = useState (true);
 
   const navigate = useNavigate();
 

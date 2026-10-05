@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useState } from "react";
 
 // pages & components
 import Home from "./pages/HomePage";
@@ -11,19 +12,28 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState (()=> {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user && user.token? true : false;
+  });
+
   return (
     <div className="App">
       <BrowserRouter>
-        <Navbar />
+        <Navbar 
+          isAuthenticated={isAuthenticated}
+          setIsAuthenticated={setIsAuthenticated}
+          />
+
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/add-workout" element={<AddWorkoutPage />} />
+            <Route path="/add-workout" element={isAuthenticated ? <AddWorkoutPage /> : <Navigate to="/signup" />} />
             <Route path="/workouts/:id" element={<WorkoutPage />} />
-            <Route path="/edit-workout/:id" element={<EditWorkoutPage />} />
+            <Route path="/edit-workout/:id" element={isAuthenticated ? <EditWorkoutPage /> : <Navigate to="/signup"/>} />
             <Route path="*" element={<NotFoundPage />} />
-            <Route path="/signup" element={<Signup />}/>
-            <Route path="/login" element={<Login />}/>
+            <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />}/>
+            <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />}/>
           </Routes>
         </div>
       </BrowserRouter>

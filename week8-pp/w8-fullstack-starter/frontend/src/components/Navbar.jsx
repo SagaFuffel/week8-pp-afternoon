@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+const Navbar = ({isAuthenticated, setIsAuthenticated}) => {
+
   const handleClick = () => {
-    // setIsAuthenticated(false);
     localStorage.removeItem("user");
-    window.location("/");
+    setIsAuthenticated(false);
   };
 
   return (
@@ -16,16 +15,16 @@ const Navbar = () => {
 
       <div className="links">
 
-        {user && (
+        {isAuthenticated && (
       
           <div>
             <Link to="/add-workout">Add Product</Link>
-            <span>{user.username}</span>
+            <span>{JSON.parse(localStorage.getItem("user")).username}</span>
             <button onClick={handleClick}>Log out</button>
           </div>
         )}
 
-        {!user && (
+        {!isAuthenticated && (
           <div>
             <Link to="/login">Login</Link>
             <Link to="/signup">Signup</Link>

@@ -13,10 +13,10 @@ const WorkoutPage = () => {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const deleteWorkout = async () => {
+  const deleteWorkout = async (workoutId) => {
 
     try {
-      const response = await fetch (`/api/workouts/${id}`, {
+      const response = await fetch (`/api/workouts/${workoutId}`, {
         method : "DELETE",
         headers: {
           Authorization: `Bearer ${user.token}`
@@ -28,6 +28,7 @@ const WorkoutPage = () => {
         throw new Error ("Failed to delete workout");
     } catch (error) {
       console.error(error);
+      return false;
     }
 
 };
@@ -57,8 +58,8 @@ const handleDelete = async (workoutId) => {
   if (!confirmation) return;
 
   await deleteWorkout(workoutId);
-  navigate ("/");
-}
+  navigate("/");
+};
 
 
   return (

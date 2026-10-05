@@ -3,8 +3,9 @@ const User = require ("../models/userModel");
 const jwt = require ("jsonwebtoken");
 const bcrypt = require ("bcryptjs");
 
-const generateToken = (_id) => {
-    return jwt.sign({_id}, process.env.SECRET, {
+const generateToken = (_id, username) => {
+    return jwt.sign({_id, username}, 
+        process.env.SECRET, {
         expiresIn: "3d",
     });
 ;}
@@ -22,11 +23,15 @@ const signupUser = async (req, res) => {
         if (!username ||
             !password ||
             !phoneNumber ||
-            !name ||
-            !role
+            !name 
         ) {
             res.status (400);
-            throw new Error ("please filled up all fields");
+            throw new Error ("Please add all fields");
+        }
+
+        if (role && ! ["user", "admin"].includes(role)) {
+            res.status(400);
+            throw new Error ("Invalid role");
         }
 
         const existUser = await User.findOne({username});
@@ -48,8 +53,12 @@ const signupUser = async (req, res) => {
         });
 
         if (user) {
-            const token = generateToken(user._id);
-            res.status (201).json({username, token});
+            const token = generateToken(user._id, user.username);
+            res.status (201)
+            .json({
+                username: user.username,
+                role: user.role,
+                token});
         } else {
             res.status (400);
             throw new Error ("Invalid user info");
@@ -66,8 +75,12 @@ const loginUser = async (req, res ) => {
         const user = await User.findOne ({username});
 
         if (user && (await bcrypt.compare (password, user.password))) {
-            const token = generateToken(user._id);
-            res.status (200). json ({username, token});
+            const token = generateToken(user._id, user.username);
+            res.status (200)
+            .json ({
+                username: user.username, 
+                token,
+                role: user.role});
         } else {
             res.status (400);
             throw new Error ("Invalid credentials");
