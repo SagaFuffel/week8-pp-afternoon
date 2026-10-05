@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 // GET /api/workouts
 const getAllWorkouts = async (req, res) => {
-  //res.send("getAllWorkouts");
+
   try {
     const workouts = await Workout.find({}).sort({ createdAt: -1 });
     res.status(200).json(workouts);
@@ -13,15 +13,19 @@ const getAllWorkouts = async (req, res) => {
 };
 
 // POST /api/workouts
+// POST /api/products
 const createWorkout = async (req, res) => {
-  //res.send("createWorkout");
   try {
-    const newWorkout = await Workout.create({ ...req.body });
+    const user_id = req.user._id;
+    const newWorkout = new Workout({
+      ...req.body,
+      user_id,
+    });
+    await newWorkout.save();
     res.status(201).json(newWorkout);
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Failed to create a new workout", error: error.message })
+    console.error("Error creating workout:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
